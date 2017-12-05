@@ -777,7 +777,7 @@ print_list()
 append_modules() {
     local group
     local group_modules
-    local MOD_EXT=".ko"
+    local MOD_EXT=".ko*"
 
     print_info 2 "initramfs: >> Searching for modules..."
     if [ "${INSTALL_MOD_PATH}" != '' ]
