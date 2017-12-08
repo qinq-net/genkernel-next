@@ -502,6 +502,17 @@ which the ramdisk scripts would recognize.
     Scan for bootable ZFS pools on bootup. Optionally force import if
     necessary.
 
+*zfs_load*=dataset[:keydev:keydev_fs:key[:keydev_flags]]::
+    Load ZFS datasets on bootup. Can be added for multiple times to
+    sequentially load multiple datasets.
+    
+    dataset: ZFS dataset to be loaded
+    keydev: device from which keyfile will be loaded
+    keydev_fs: filesystem type of keydev, must be `zfs` if it is
+        a ZFS dataset
+    key: path from the root of keydev to the real keyfile
+    keydev_flags: append additional flags to mount(8)
+
 *domultipath*::
     Activate Multipath on bootup
 
