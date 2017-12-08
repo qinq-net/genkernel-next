@@ -606,7 +606,15 @@ append_firmware() {
         IFS=","
         for i in ${FIRMWARE_FILES}
         do
-            cp -L "${i}" ${TEMP}/initramfs-firmware-temp/lib/firmware/
+            case "$i" in
+            /lib/firmware/*)
+                install -Dm644 "${i}" ${TEMP}/initramfs-firmware-temp/lib/firmware/${i##/lib/firmware/}
+                continue
+                ;;
+            *)
+                cp -L "${i}" ${TEMP}/initramfs-firmware-temp/lib/firmware/
+                ;;
+            esac
         done
         IFS=$OLD_IFS
     else
