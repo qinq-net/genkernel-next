@@ -302,10 +302,10 @@ zfs_start_volumes
 
 setup_keymap
 
-# Initialize LUKS root device except for livecd's
-is_livecd || start_luks
 # ZFS load encrypted datasets
 is_livecd || zfs_loadkey
+# Initialize LUKS root device except for livecd's
+is_livecd || start_luks
 
 start_volumes
 zfs_start_volumes
