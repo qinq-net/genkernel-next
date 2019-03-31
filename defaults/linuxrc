@@ -105,6 +105,9 @@ for x in ${CMDLINE}; do
                 ZPOOL_FORCE=-f
             fi
         ;;
+	zfs_load=*)
+            ZFS_LOADS="${ZFS_LOADS} ${x#*=}"
+	;;
         quiet)
             QUIET=1
         ;;
@@ -299,6 +302,8 @@ zfs_start_volumes
 
 setup_keymap
 
+# ZFS load encrypted datasets
+is_livecd || zfs_loadkey
 # Initialize LUKS root device except for livecd's
 is_livecd || start_luks
 

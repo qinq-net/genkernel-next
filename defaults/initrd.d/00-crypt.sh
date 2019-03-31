@@ -135,12 +135,21 @@ _open_luks() {
 
             if [ -n "${luks_key}" ]; then
                 local real_luks_keydev="${luks_keydev}"
+                local real_luks_keydev_fs="auto"
+                local real_luks_keydev_mountpoint=""
+                local real_luks_keydev_flags="ro"
 
                 if [ ! -e "${mntkey}${luks_key}" ]; then
                     real_luks_keydev=$(find_real_device "${luks_keydev}")
                     good_msg "Using key device ${real_luks_keydev}."
 
                     if [ ! -b "${real_luks_keydev}" ]; then
+                      if real_luks_keydev_mountpoint=$(zfs get -Ho value mountpoint ${luks_keydev}); then
+                          real_luks_keydev_fs="zfs"
+                          if [ "${real_luks_keydev_mountpoint}" != "legacy" ]; then
+                              real_luks_keydev_flags="${real_luks_keydev_flags},zfsutil"
+                          fi
+                      else
                         bad_msg "Insert device ${luks_keydev} for ${luks_dev_name}"
                         bad_msg "You have 10 seconds..."
                         local count=10
@@ -170,14 +179,17 @@ _open_luks() {
                             # continue otherwise will mount keydev which is
                             # mounted by bootstrap
                             continue
-                        fi
+                         fi
+                       fi
                     fi
 
                     # At this point a device was recognized, now let's see
                     # if the key is there
                     mkdir -p "${mntkey}"  # ignore
 
-                    mount -n -o ro "${real_luks_keydev}" \
+                    mount -n -t "${real_luks_keydev_fs}" \
+                        -o "${real_luks_keydev_flags}" \
+                        "${real_luks_keydev}" \
                         "${mntkey}" || {
                         keydev_error=1
                         bad_msg "Mounting of device ${real_luks_keydev} failed."
