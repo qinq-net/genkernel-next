@@ -606,7 +606,15 @@ append_firmware() {
         IFS=","
         for i in ${FIRMWARE_FILES}
         do
-            cp -L "${i}" ${TEMP}/initramfs-firmware-temp/lib/firmware/
+            case "$i" in
+            /lib/firmware/*)
+                install -Dm644 "${i}" ${TEMP}/initramfs-firmware-temp/lib/firmware/${i##/lib/firmware/}
+                continue
+                ;;
+            *)
+                cp -L "${i}" ${TEMP}/initramfs-firmware-temp/lib/firmware/
+                ;;
+            esac
         done
         IFS=$OLD_IFS
     else
@@ -777,7 +785,7 @@ print_list()
 append_modules() {
     local group
     local group_modules
-    local MOD_EXT=".ko"
+    local MOD_EXT=".ko*"
 
     print_info 2 "initramfs: >> Searching for modules..."
     if [ "${INSTALL_MOD_PATH}" != '' ]
@@ -821,7 +829,7 @@ append_modules() {
 }
 
 append_drm() {
-    local MOD_EXT=".ko"
+    local MOD_EXT=".ko*"
 
     print_info 2 "initramfs: >> Appending drm drivers..."
     if [ "${INSTALL_MOD_PATH}" != '' ]

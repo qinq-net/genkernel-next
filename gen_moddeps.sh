@@ -3,7 +3,7 @@
 
 modules_kext()
 {
-    KEXT=".ko"
+    KEXT=".ko.*"
     echo ${KEXT}
 }
 
