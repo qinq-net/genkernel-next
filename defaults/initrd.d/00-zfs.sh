@@ -93,12 +93,6 @@ zfs_start_volumes() {
         local pools=$(zpool list -H -o name ${ZFS_POOL} 2>&1)
         if [ "${pools}" = "${ZFS_POOL}" ]; then
             good_msg "ZFS pool ${ZFS_POOL} already imported."
-
-            if [ -n "${CRYPT_ROOTS}" ] || [ -n "${CRYPT_SWAPS}" ]; then
-                good_msg "LUKS detected. Reimporting ${ZFS_POOL}"
-                zpool export -f "${ZFS_POOL}"
-                zpool import -N ${ZPOOL_FORCE} "${ZFS_POOL}"
-            fi
         else
             good_msg "Importing ZFS pool ${ZFS_POOL}"
             zpool import -N ${ZPOOL_FORCE} "${ZFS_POOL}"
